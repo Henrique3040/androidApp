@@ -1,7 +1,10 @@
+import org.jetbrains.kotlin.konan.properties.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.map.secret)
 }
 
 android {
@@ -19,6 +22,14 @@ android {
     }
 
     buildTypes {
+
+        release {
+            buildConfigField("String", "MAPS_KEY", "\"${Properties().apply {
+                load(project.rootProject.file("local.properties").inputStream())
+            }["MAPS_KEY"]}\"")
+        }
+
+
         release {
             isMinifyEnabled = false
             proguardFiles(
@@ -35,6 +46,7 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
+        buildConfig = true
         compose = true
     }
 }
@@ -49,6 +61,10 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.places)
+
+
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
