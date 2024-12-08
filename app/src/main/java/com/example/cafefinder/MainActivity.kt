@@ -5,6 +5,9 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.viewModels
+import com.example.cafefinder.data.Locatie
+import com.example.cafefinder.data.LocatieViewModel
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -14,6 +17,7 @@ class MainActivity : ComponentActivity() {
 
     private lateinit var selectLocation: LinearLayout
     private lateinit var textSelectedLocation: TextView
+    private val locatieViewModel: LocatieViewModel by viewModels()
 
 
     val placesResult =
@@ -23,6 +27,9 @@ class MainActivity : ComponentActivity() {
                 if (intent != null) {
                     val place = Autocomplete.getPlaceFromIntent(intent)
                     textSelectedLocation.text = place.address
+
+                    val newLocatie = Locatie(0, textSelectedLocation.toString())
+                    locatieViewModel.addLocatie(newLocatie)
 
                 }
             }
@@ -46,5 +53,9 @@ class MainActivity : ComponentActivity() {
                 .build(this)
             placesResult.launch(intent)
         }
+
+
+
+
     }
 }
