@@ -55,8 +55,28 @@ class LocatieStore {
         }
     }
 
+    fun getAllLocaties(): Flow<List<Locatie>> {
+        return callbackFlow {
+            val listenerRegistration = db.collection(collection)
+                .addSnapshotListener { snapshot, exception ->
+                    if (exception != null) {
+                        println(tag + "Error getting documents: ${exception.message}")
+                        trySend(emptyList()) // Send empty list on error
+                        return@addSnapshotListener
+                    }
 
-    fun getUser(address : String ): Flow<Locatie?> {
+                    val locaties = snapshot?.documents?.mapNotNull { document ->
+                        document.data?.toLocatie()
+                    } ?: emptyList()
+
+                    trySend(locaties)
+                }
+
+            awaitClose { listenerRegistration.remove() }
+        }
+    }
+
+    fun getLocatie(address : String ): Flow<Locatie?> {
         return callbackFlow {
             db.collection(collection)
                 .get()

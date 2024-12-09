@@ -27,6 +27,12 @@
             android:layout_height="wrap_content"
             android:id="@+id/text_selected_location" />
 
+        <Button
+            android:id="@+id/view_saved_locations_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="View Saved Locations" />
+
     </LinearLayout>
 
 </LinearLayout>

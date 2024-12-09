@@ -1,6 +1,8 @@
 package com.example.cafefinder
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
+import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
@@ -68,7 +70,12 @@ class MainActivity : ComponentActivity() {
             placesResult.launch(intent)
         }
 
+        val viewSavedLocationsButton = findViewById<Button>(R.id.view_saved_locations_button)
+        viewSavedLocationsButton.setOnClickListener {
+            val intent = Intent(this, SavedLocatieActivity::class.java)
+            startActivity(intent)
 
 
+        }
     }
 }
