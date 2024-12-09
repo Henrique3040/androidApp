@@ -5,15 +5,21 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.activity.result.launch
+import androidx.lifecycle.lifecycleScope
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
     private lateinit var selectLocation: LinearLayout
     private lateinit var textSelectedLocation: TextView
+    val firestoreLocaties = LocatieStore()
+
+
 
 
     val placesResult =
@@ -24,6 +30,19 @@ class MainActivity : ComponentActivity() {
                     val place = Autocomplete.getPlaceFromIntent(intent)
                     textSelectedLocation.text = place.address
 
+                    val newLocatie = Locatie(address = place.address!!) // Create Locatie object
+                    lifecycleScope.launch {
+                        firestoreLocaties.saveLocatie(newLocatie).collect { documentId ->
+                            if (documentId != null) {
+                                // Location saved successfully
+                                println("Location saved with ID: $documentId")
+                            } else {
+                                // Error saving location
+                                println("Error saving location")
+                            }
+
+                        }
+                    }
                 }
             }
         }
@@ -31,6 +50,8 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+
 
         val mapsKey = BuildConfig.MAPS_KEY
         if (!Places.isInitialized()) {
@@ -46,5 +67,8 @@ class MainActivity : ComponentActivity() {
                 .build(this)
             placesResult.launch(intent)
         }
+
+
+
     }
 }
