@@ -23,9 +23,7 @@ class LocatieStore {
                     println(tag + "Locatie toegevoegd met id: ${document.id}")
 
                     CoroutineScope(Dispatchers.IO).launch {
-                    updateLocatie(locatie).collect{
-
-                    }
+                    updateLocatie(locatie.copy(id = document.id)).collect{}
                     }
 
                     trySend(document.id)
