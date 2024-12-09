@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "26563861003",
+    "project_id": "androidapp-aa787",
+    "storage_bucket": "androidapp-aa787.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:26563861003:android:33e2b7ccdb0c8d523a050e",
+        "android_client_info": {
+          "package_name": "com.example.cafefinder"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAqpTLg0ChDnPqv6fvrrfz0Qdh0pFa0oEI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
