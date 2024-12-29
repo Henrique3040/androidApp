@@ -1,4 +1,4 @@
-package com.example.cafefinder
+package com.example.cafefinder.ui.theme.main
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
@@ -7,8 +7,12 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.activity.ComponentActivity
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.activity.result.launch
 import androidx.lifecycle.lifecycleScope
+import com.example.cafefinder.BuildConfig
+import com.example.cafefinder.data.model.Locatie
+import com.example.cafefinder.data.database.LocatieStore
+import com.example.cafefinder.R
+import com.example.cafefinder.ui.theme.saved.SavedLocatieActivity
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete

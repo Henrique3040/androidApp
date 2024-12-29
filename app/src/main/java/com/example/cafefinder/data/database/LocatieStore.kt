@@ -1,5 +1,6 @@
-package com.example.cafefinder
+package com.example.cafefinder.data.database
 
+import com.example.cafefinder.data.model.Locatie
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

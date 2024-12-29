@@ -1,4 +1,4 @@
-package com.example.cafefinder
+package com.example.cafefinder.ui.theme.saved
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -16,6 +16,8 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.example.cafefinder.data.database.LocatieStore
+import com.example.cafefinder.data.model.Locatie
 import com.example.cafefinder.ui.theme.CafeFinderTheme
 
 class SavedLocatieActivity : ComponentActivity() {
