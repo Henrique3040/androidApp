@@ -14,8 +14,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.example.cafefinder.BuildConfig
-import com.example.cafefinder.data.database.LocatieStore
 import com.example.cafefinder.data.model.Locatie
+import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.ui.theme.CafeFinderTheme
 import com.example.cafefinder.ui.theme.saved.SavedLocatieActivity
 import com.example.cafefinder.ui.theme.components.NavigationBar
@@ -27,8 +27,8 @@ import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
 
-    private val firestoreLocaties = LocatieStore()
     private val selectedLocation = mutableStateOf("")
+    private lateinit var syncService: SyncService
 
     private val placesResult =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
@@ -40,13 +40,7 @@ class MainActivity : ComponentActivity() {
 
                     val newLocatie = Locatie(address = place.address!!) // Create Locatie object
                     lifecycleScope.launch {
-                        firestoreLocaties.saveLocatie(newLocatie).collect { documentId ->
-                            if (documentId != null) {
-                                println("Location saved with ID: $documentId")
-                            } else {
-                                println("Error saving location")
-                            }
-                        }
+                       syncService.syncLocatie(newLocatie)
                     }
                 }
             }
@@ -60,7 +54,11 @@ class MainActivity : ComponentActivity() {
             Places.initialize(this.applicationContext, mapsKey)
         }
 
+        syncService = SyncService(this)
 
+        lifecycleScope.launch {
+            syncService.syncLocatiesFromFirebaseToRoom()
+        }
 
         setContent {
             CafeFinderTheme {
