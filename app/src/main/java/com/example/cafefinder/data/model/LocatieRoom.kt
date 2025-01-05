@@ -3,8 +3,9 @@ package com.example.cafefinder.data.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity(tableName = "locaties")
-data class Locatie(
-    @PrimaryKey val id: String = "",
+data class LocatieRoom(
+
+    val id: String,
     val address: String
+
 )

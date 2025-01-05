@@ -15,7 +15,6 @@
         <activity
             android:name=".ui.theme.saved.SavedLocatieActivity"
             android:exported="true"
-            android:label="@string/title_activity_saved_locatie"
             android:theme="@style/Theme.CafeFinder" />
         <activity
             android:name=".ui.theme.main.MainActivity"

@@ -1,5 +1,6 @@
 package com.example.cafefinder.data.database
 
+import android.content.Context
 import com.example.cafefinder.data.model.Locatie
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.CoroutineScope
@@ -8,23 +9,43 @@ import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
-class LocatieStore {
+class LocatieStore (private val context: Context) {
 
     private val tag = "LocatieStore"
     private val collection = "locaties"
 
     private val db = FirebaseFirestore.getInstance()
+    private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
+
+
+    suspend fun getAllLocatiesFromRoom(): List<Locatie> {
+        return withContext(Dispatchers.IO) {
+            locatieDao.getAllLocaties()
+        }
+    }
+
+
+    suspend fun saveLocatieToRoom(locatie: Locatie) {
+        withContext(Dispatchers.IO) {
+            locatieDao.insert(locatie)
+        }
+    }
+
 
     fun saveLocatie(locatie: Locatie): Flow<String?> {
+
         return callbackFlow {
             db.collection(collection)
                 .add(locatie.toHashMap())
                 .addOnSuccessListener { document ->
                     println(tag + "Locatie toegevoegd met id: ${document.id}")
 
+
                     CoroutineScope(Dispatchers.IO).launch {
                     updateLocatie(locatie.copy(id = document.id)).collect{}
+
                     }
 
                     trySend(document.id)
@@ -40,6 +61,13 @@ class LocatieStore {
 
     fun updateLocatie(locatie: Locatie): Flow<Boolean> {
         return callbackFlow {
+            if (locatie.id.isEmpty()) {
+                println(tag + "Fout: Locatie-ID ontbreekt.")
+                trySend(false)
+                close() // Stop verdere verwerking
+                return@callbackFlow
+            }
+
             db.collection(collection)
                 .document(locatie.id)
                 .set(locatie.toHashMap())
@@ -105,6 +133,7 @@ class LocatieStore {
 
 
     private fun Locatie.toHashMap(): HashMap<String, Any> {
+
         return hashMapOf(
             "id" to id,
             "address" to address
