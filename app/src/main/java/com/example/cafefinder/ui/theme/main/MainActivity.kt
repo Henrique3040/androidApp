@@ -12,6 +12,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.example.cafefinder.BuildConfig
@@ -64,7 +65,7 @@ class MainActivity : AppCompatActivity() {
         setContent {
             CafeFinderTheme {
                 NavigationBar(
-                    title = "Cafe Finder",
+                    title = "Finder",
                     onNavigateToMain = { /* Already here */ },
                     onNavigateToSavedLocations = {
                         val intent = Intent(this, SavedLocatieActivity::class.java)
@@ -114,6 +115,26 @@ fun MainScreen(modifier: Modifier,
         Button(onClick = { /* Navigate to Saved Locations */ }) {
             Text("View Saved Locations")
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun MainScreenPreview() {
+
+    CafeFinderTheme {
+        NavigationBar(
+            title = "Finder",
+            onNavigateToMain = { /* Already here */ },
+            onNavigateToSavedLocations = {}
+        ){
+            MainScreen(modifier = Modifier.fillMaxSize(),
+                selectedLocation = "Selected Location",
+                onSelectLocationClick = {},
+                onViewSavedLocationsClick = {}
+            )
+        }
+
     }
 }
 
