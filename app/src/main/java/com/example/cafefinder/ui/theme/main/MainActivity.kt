@@ -79,12 +79,7 @@ class MainActivity : AppCompatActivity() {
                             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this)
                             placesResult.launch(intent)
                         },
-                        onViewSavedLocationsClick = {
-                            val intent = Intent(this, SavedLocatieActivity::class.java)
-                            startActivity(intent)
-
-
-                        })
+                        )
                 }
             }
 
@@ -95,9 +90,7 @@ class MainActivity : AppCompatActivity() {
 @Composable
 fun MainScreen(modifier: Modifier,
                selectedLocation: String,
-               onSelectLocationClick: () -> Unit,
-               onViewSavedLocationsClick: () -> Unit) {
-
+               onSelectLocationClick: () -> Unit, ) {
 
     Column(
         modifier = modifier
@@ -111,10 +104,7 @@ fun MainScreen(modifier: Modifier,
         Button(onClick = onSelectLocationClick) {
             Text("Select Location")
         }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { /* Navigate to Saved Locations */ }) {
-            Text("View Saved Locations")
-        }
+
     }
 }
 
@@ -131,7 +121,6 @@ fun MainScreenPreview() {
             MainScreen(modifier = Modifier.fillMaxSize(),
                 selectedLocation = "Selected Location",
                 onSelectLocationClick = {},
-                onViewSavedLocationsClick = {}
             )
         }
 
