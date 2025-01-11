@@ -34,6 +34,8 @@ class LocatieStore (private val context: Context) {
     }
 
 
+
+
     fun saveLocatie(locatie: Locatie): Flow<String?> {
 
         return callbackFlow {
@@ -42,10 +44,8 @@ class LocatieStore (private val context: Context) {
                 .addOnSuccessListener { document ->
                     println(tag + "Locatie toegevoegd met id: ${document.id}")
 
-
                     CoroutineScope(Dispatchers.IO).launch {
                     updateLocatie(locatie.copy(id = document.id)).collect{}
-
                     }
 
                     trySend(document.id)
@@ -54,6 +54,7 @@ class LocatieStore (private val context: Context) {
                     println(tag + "Fout bij het toevoegen van locatie: ${e.message}")
                     trySend(null)
                 }
+            locatieDao.insert(locatie)
 
             awaitClose{}
         }
@@ -104,6 +105,40 @@ class LocatieStore (private val context: Context) {
             awaitClose { listenerRegistration.remove() }
         }
     }
+
+    fun deleteLocatie(locatieId: String): Flow<Boolean> {
+
+
+
+        return callbackFlow {
+            if (locatieId.isEmpty()) {
+                println("$tag Fout: Locatie-ID ontbreekt.")
+                trySend(false)
+                close()
+                return@callbackFlow
+            }
+
+            db.collection(collection)
+                .document(locatieId)
+                .delete()
+                .addOnSuccessListener {
+                    println("$tag Locatie verwijderd met id: $locatieId")
+                    trySend(true)
+                }
+                .addOnFailureListener { e ->
+                    println("$tag Fout bij het verwijderen van locatie: ${e.message}")
+                    trySend(false)
+                }
+
+            locatieDao.deleteLocatieById(locatieId)
+
+            awaitClose {}
+        }
+    }
+
+
+
+
 
     fun getLocatie(address : String ): Flow<Locatie?> {
         return callbackFlow {

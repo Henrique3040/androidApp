@@ -21,6 +21,7 @@ import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.ui.theme.CafeFinderTheme
 import com.example.cafefinder.ui.theme.saved.SavedLocatieActivity
 import com.example.cafefinder.ui.theme.components.NavigationBar
+import com.google.android.gms.maps.GoogleMap
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -38,7 +39,7 @@ class MainActivity : AppCompatActivity() {
                 val intent = it.data
                 if (intent != null) {
                     val place = Autocomplete.getPlaceFromIntent(intent)
-                    selectedLocation.value = place.address
+                    selectedLocation.value = place.name + place.address
 
                     val newLocatie = Locatie(address = place.address!!) // Create Locatie object
                     lifecycleScope.launch {
@@ -64,6 +65,8 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             CafeFinderTheme {
+
+
                 NavigationBar(
                     title = "Finder",
                     onNavigateToMain = { /* Already here */ },
@@ -75,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                     MainScreen(modifier,
                     selectedLocation = selectedLocation.value,
                         onSelectLocationClick = {
-                            val fields = listOf(Place.Field.ADDRESS)
+                            val fields = listOf(Place.Field.NAME,Place.Field.ADDRESS)
                             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this)
                             placesResult.launch(intent)
                         },

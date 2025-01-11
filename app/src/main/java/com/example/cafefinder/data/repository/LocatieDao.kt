@@ -20,5 +20,11 @@ interface LocatieDao {
     suspend fun getAllLocaties(): List<Locatie>
 
     @Delete
-    suspend fun delete(locatie: Locatie)
+    suspend fun delete(locatieid: Locatie)
+
+    @Query("DELETE FROM locaties WHERE id = :locatieId")
+    suspend fun deleteLocatieById(locatieId: String)
+
+
+
 }

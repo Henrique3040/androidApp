@@ -1,6 +1,7 @@
 package com.example.cafefinder.data.service
 
 import android.content.Context
+import com.example.cafefinder.data.database.AppDatabase
 import com.example.cafefinder.data.database.LocatieStore
 import com.example.cafefinder.data.model.Locatie
 import kotlinx.coroutines.CoroutineScope
@@ -10,6 +11,8 @@ import kotlinx.coroutines.launch
 class SyncService (private val context: Context ){
 
     private val locatieStore = LocatieStore(context)
+    private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
+
 
 
     suspend fun syncLocatie(locatie: Locatie) {
@@ -27,6 +30,17 @@ class SyncService (private val context: Context ){
     }
 
 
+    suspend fun deleteLocatie(locatieId: String) {
+
+        locatieStore.deleteLocatie(locatieId).collect { success ->
+            if (success) {
+                println("Locatie deleted with ID: $locatieId")
+            } else {
+                println("Error deleting locatie with ID: $locatieId")
+            }
+        }
+    }
+
 
 
 
@@ -38,16 +52,18 @@ class SyncService (private val context: Context ){
                 }
             }
         }
+
     }
 
 
-    fun syncLocatiesFromRoomToFirebase() {
+    suspend fun syncLocatiesFromRoomToFirebase() {
         CoroutineScope(Dispatchers.IO).launch {
             val locaties = locatieStore.getAllLocatiesFromRoom()
             locaties.forEach { locatie ->
                 locatieStore.saveLocatie(locatie)
             }
         }
+
     }
 
 }

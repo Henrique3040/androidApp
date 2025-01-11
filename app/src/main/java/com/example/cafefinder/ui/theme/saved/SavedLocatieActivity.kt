@@ -13,12 +13,12 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import com.example.cafefinder.WindowType
 import com.example.cafefinder.ui.theme.components.NavigationBar
 import com.example.cafefinder.ui.theme.CafeFinderTheme
@@ -26,6 +26,8 @@ import com.example.cafefinder.data.model.Locatie
 import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.rememberWindowSize
 import com.example.cafefinder.ui.theme.main.MainActivity
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class SavedLocatieActivity : ComponentActivity() {
@@ -61,8 +63,7 @@ class SavedLocatieActivity : ComponentActivity() {
 
 @Composable
 fun SavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
-    val locaties = remember { mutableStateListOf<Locatie>() }
-    val isLoading = remember { mutableStateOf(true) }
+
     val windowSize = rememberWindowSize()
 
     when(windowSize.width){
@@ -74,16 +75,14 @@ fun SavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
 
     }
 
-
-
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
+
     val isLoading = remember { mutableStateOf(true) }
     val locaties = remember { mutableStateListOf<Locatie>() }
-
 
 
     LaunchedEffect(Unit) {
@@ -125,6 +124,21 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(16.dp)
                         )
+                        IconButton(onClick = {
+                            // Perform delete action
+                            CoroutineScope(Dispatchers.IO).launch {
+                                syncService.deleteLocatie(locatie.id)
+                            }
+
+                        }) {
+                            Icon(
+                                Icons.Default.Delete,
+                                contentDescription = "Delete",
+                                tint = MaterialTheme.colorScheme.error
+                            )
+
+                        }
+
                     }
                 }
             }
