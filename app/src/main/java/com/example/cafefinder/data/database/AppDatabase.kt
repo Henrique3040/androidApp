@@ -5,7 +5,6 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.example.cafefinder.data.model.Locatie
-import com.example.cafefinder.data.model.LocatieRoom
 import com.example.cafefinder.data.repository.LocatieDao
 
 @Database(entities = [Locatie::class], version = 1, exportSchema = false)
@@ -20,7 +19,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "app_database"
+                    "app_database2"
                 ).build()
                 INSTANCE = instance
                 instance

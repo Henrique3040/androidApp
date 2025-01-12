@@ -6,7 +6,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import com.example.cafefinder.data.model.Locatie
-import com.example.cafefinder.data.model.LocatieRoom
 
 @Dao
 interface LocatieDao {

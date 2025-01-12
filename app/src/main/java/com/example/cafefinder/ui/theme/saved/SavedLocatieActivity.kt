@@ -4,7 +4,10 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.example.cafefinder.WindowType
@@ -119,8 +123,9 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
             } else {
                 LazyColumn(modifier = modifier.padding(padding)) {
                     items(locaties) { locatie ->
+
                         Text(
-                            text = locatie.address,
+                            text = "${locatie.name} \n${locatie.address}",
                             style = MaterialTheme.typography.bodyLarge,
                             modifier = Modifier.padding(16.dp)
                         )
@@ -189,12 +194,34 @@ fun MediumToExpandedSavedLocationsScreen(modifier: Modifier, syncService: SyncSe
                 LazyVerticalGrid(modifier = modifier.padding(padding),
                     columns = GridCells.Adaptive(250.dp)) {
                     items(locaties) { locatie ->
-                        Text(
-                            text = locatie.address,
-                            style = MaterialTheme.typography.bodyLarge,
-                            modifier = Modifier.padding(16.dp)
-                        )
+
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(16.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = "${locatie.name} \n${locatie.address}",
+                                style = MaterialTheme.typography.bodyLarge,
+                                modifier = Modifier.weight(1f)
+                            )
+                            IconButton(onClick = {
+                                // Perform delete action
+                                CoroutineScope(Dispatchers.IO).launch {
+                                    syncService.deleteLocatie(locatie.id)
+                                }
+                            }) {
+                                Icon(
+                                    Icons.Default.Delete,
+                                    contentDescription = "Delete",
+                                    tint = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
                     }
+
                 }
             }
         }

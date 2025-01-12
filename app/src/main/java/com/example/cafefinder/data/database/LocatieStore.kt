@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 class LocatieStore (private val context: Context) {
 
     private val tag = "LocatieStore"
-    private val collection = "locaties"
+    private val collection = "locaties2"
 
     private val db = FirebaseFirestore.getInstance()
     private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
@@ -171,6 +171,7 @@ class LocatieStore (private val context: Context) {
 
         return hashMapOf(
             "id" to id,
+            "name" to name,
             "address" to address
         )
     }
@@ -178,6 +179,7 @@ class LocatieStore (private val context: Context) {
     private fun Map<String, Any>.toLocatie(): Locatie {
         return Locatie(
             id = get("id") as String,
+            name = get("name") as String,
             address = get("address") as String
         )
 
