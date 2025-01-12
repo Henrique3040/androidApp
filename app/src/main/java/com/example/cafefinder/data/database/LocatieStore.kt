@@ -27,15 +27,6 @@ class LocatieStore (private val context: Context) {
     }
 
 
-    suspend fun saveLocatieToRoom(locatie: Locatie) {
-        withContext(Dispatchers.IO) {
-            locatieDao.insert(locatie)
-        }
-    }
-
-
-
-
     fun saveLocatie(locatie: Locatie): Flow<String?> {
 
         return callbackFlow {
@@ -54,7 +45,6 @@ class LocatieStore (private val context: Context) {
                     println(tag + "Fout bij het toevoegen van locatie: ${e.message}")
                     trySend(null)
                 }
-            locatieDao.insert(locatie)
 
             awaitClose{}
         }
@@ -80,6 +70,9 @@ class LocatieStore (private val context: Context) {
                     println(tag + "Fout bij het toevoegen van locatie: ${e.message}")
                     trySend(false)
                 }
+
+            println("Saving locatie with ID room: ${locatie.id}")
+            locatieDao.insert(locatie)
 
             awaitClose{}
         }
@@ -133,36 +126,6 @@ class LocatieStore (private val context: Context) {
             locatieDao.deleteLocatieById(locatieId)
 
             awaitClose {}
-        }
-    }
-
-
-
-
-
-    fun getLocatie(address : String ): Flow<Locatie?> {
-        return callbackFlow {
-            db.collection(collection)
-                .get()
-                .addOnSuccessListener { result ->
-
-                    var locatie: Locatie? = null
-                    for (document in result) {
-                        if (document.data["address"] == address) {
-                            locatie = document.data.toLocatie()
-                            println(tag + "Locatie gevonden met id: ${locatie.id}")
-                            trySend(locatie)
-                        }
-                        }
-
-
-                }
-                .addOnFailureListener{ e ->
-                    println(tag + "Fout bij het getting van locatie: ${e.message}")
-                    trySend(null)
-                }
-
-            awaitClose{}
         }
     }
 

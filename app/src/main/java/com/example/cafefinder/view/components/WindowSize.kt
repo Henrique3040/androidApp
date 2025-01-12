@@ -1,4 +1,4 @@
-package com.example.cafefinder
+package com.example.cafefinder.view.components
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalConfiguration
@@ -7,7 +7,7 @@ data class WindowSize(
     val width: WindowType,
     val height: WindowType,
 
-)
+    )
 
 enum class WindowType {
     Compact,

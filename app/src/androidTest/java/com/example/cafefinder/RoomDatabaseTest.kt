@@ -41,4 +41,23 @@ class RoomDatabaseTest {
         assertEquals(locatie.id, foundLocatie?.id)
     }
 
+    @Test
+    fun deleteLocatie() = runBlocking {
+        val dao = db.locatieDao()
+
+        // Voeg een locatie toe
+        val locatie = Locatie("test", "Test Adress")
+        dao.insert(locatie)
+
+        assertEquals(1, dao.getAllLocaties().size)
+
+        // Verwijder de locatie
+        dao.delete(locatie)
+
+        assertEquals(0, dao.getAllLocaties().size)
+
+    }
+
+
+
 }

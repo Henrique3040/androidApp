@@ -1,4 +1,4 @@
-package com.example.cafefinder.ui.theme.components
+package com.example.cafefinder.view.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable

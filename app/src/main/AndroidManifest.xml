@@ -13,11 +13,12 @@
         android:theme="@style/Theme.CafeFinder"
         tools:targetApi="31">
         <activity
-            android:name=".ui.theme.saved.SavedLocatieActivity"
+            android:name=".view.saved.SavedLocatieActivity"
+            android:label="@string/app_name"
             android:exported="true"
             android:theme="@style/Theme.CafeFinder" />
         <activity
-            android:name=".ui.theme.main.MainActivity"
+            android:name=".view.main.MainActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:launchMode="singleTask"

@@ -1,4 +1,4 @@
-package com.example.cafefinder.ui.theme.main
+package com.example.cafefinder.view.main
 
 import android.app.Activity
 import android.content.Intent
@@ -18,8 +18,8 @@ import com.example.cafefinder.BuildConfig
 import com.example.cafefinder.data.model.Locatie
 import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.ui.theme.CafeFinderTheme
-import com.example.cafefinder.ui.theme.saved.SavedLocatieActivity
-import com.example.cafefinder.ui.theme.components.NavigationBar
+import com.example.cafefinder.view.saved.SavedLocatieActivity
+import com.example.cafefinder.view.components.NavigationBar
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity() {
     private fun saveLocation(location: String) {
         lifecycleScope.launch {
             if (location.isNotEmpty()) {
-                val newLocation = Locatie(name = location.split(" ").first(), address = location)
+                val newLocation = Locatie( name = location.split(" ").first(), address = location)
                 syncService.syncSaveLocaties(newLocation)
                 selectedLocation.value = location
                 pendingLocation.value = "" // Clear pending location after save
