@@ -1,9 +1,8 @@
-package com.example.cafefinder.ui.theme.main
+package com.example.cafefinder.view.main
 
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -19,8 +18,8 @@ import com.example.cafefinder.BuildConfig
 import com.example.cafefinder.data.model.Locatie
 import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.ui.theme.CafeFinderTheme
-import com.example.cafefinder.ui.theme.saved.SavedLocatieActivity
-import com.example.cafefinder.ui.theme.components.NavigationBar
+import com.example.cafefinder.view.saved.SavedLocatieActivity
+import com.example.cafefinder.view.components.NavigationBar
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
@@ -30,6 +29,8 @@ import kotlinx.coroutines.launch
 class MainActivity : AppCompatActivity() {
 
     private val selectedLocation = mutableStateOf("")
+    private var pendingLocation = mutableStateOf("")
+
     private lateinit var syncService: SyncService
 
     private val placesResult =
@@ -38,12 +39,8 @@ class MainActivity : AppCompatActivity() {
                 val intent = it.data
                 if (intent != null) {
                     val place = Autocomplete.getPlaceFromIntent(intent)
-                    selectedLocation.value = place.address
+                    pendingLocation.value = "${place.name} ${place.address}"
 
-                    val newLocatie = Locatie(address = place.address!!) // Create Locatie object
-                    lifecycleScope.launch {
-                       syncService.syncLocatie(newLocatie)
-                    }
                 }
             }
         }
@@ -64,6 +61,8 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             CafeFinderTheme {
+
+
                 NavigationBar(
                     title = "Finder",
                     onNavigateToMain = { /* Already here */ },
@@ -73,31 +72,41 @@ class MainActivity : AppCompatActivity() {
                     }
                 ) { modifier ->
                     MainScreen(modifier,
-                    selectedLocation = selectedLocation.value,
+                    selectedLocation = pendingLocation.value,
                         onSelectLocationClick = {
-                            val fields = listOf(Place.Field.ADDRESS)
+                            val fields = listOf(Place.Field.NAME,Place.Field.ADDRESS)
                             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this)
                             placesResult.launch(intent)
                         },
-                        onViewSavedLocationsClick = {
-                            val intent = Intent(this, SavedLocatieActivity::class.java)
-                            startActivity(intent)
-
-
-                        })
+                        onsaveLocationClick = {
+                            saveLocation(pendingLocation.value)
+                        }
+                        )
                 }
             }
 
         }
     }
+    private fun saveLocation(location: String) {
+        lifecycleScope.launch {
+            if (location.isNotEmpty()) {
+                val newLocation = Locatie( name = location.split(" ").first(), address = location)
+                syncService.syncSaveLocaties(newLocation)
+                selectedLocation.value = location
+                pendingLocation.value = "" // Clear pending location after save
+            }
+        }
+    }
+
 }
+
+
 
 @Composable
 fun MainScreen(modifier: Modifier,
                selectedLocation: String,
                onSelectLocationClick: () -> Unit,
-               onViewSavedLocationsClick: () -> Unit) {
-
+               onsaveLocationClick: () -> Unit) {
 
     Column(
         modifier = modifier
@@ -106,15 +115,17 @@ fun MainScreen(modifier: Modifier,
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text(text = "Selected Location: $selectedLocation")
+        Text(text = "Selected Location \n$selectedLocation")
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onSelectLocationClick) {
             Text("Select Location")
         }
         Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { /* Navigate to Saved Locations */ }) {
-            Text("View Saved Locations")
+        Button(onClick = onsaveLocationClick) {
+            Text("Save")
         }
+
+
     }
 }
 
@@ -131,7 +142,7 @@ fun MainScreenPreview() {
             MainScreen(modifier = Modifier.fillMaxSize(),
                 selectedLocation = "Selected Location",
                 onSelectLocationClick = {},
-                onViewSavedLocationsClick = {}
+                onsaveLocationClick = {}
             )
         }
 

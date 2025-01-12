@@ -1,4 +1,4 @@
-package com.example.cafefinder.ui.theme.components
+package com.example.cafefinder.view.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons

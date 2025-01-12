@@ -1,6 +1,7 @@
 package com.example.cafefinder.data.service
 
 import android.content.Context
+import com.example.cafefinder.data.database.AppDatabase
 import com.example.cafefinder.data.database.LocatieStore
 import com.example.cafefinder.data.model.Locatie
 import kotlinx.coroutines.CoroutineScope
@@ -10,9 +11,9 @@ import kotlinx.coroutines.launch
 class SyncService (private val context: Context ){
 
     private val locatieStore = LocatieStore(context)
+    private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
 
-
-    suspend fun syncLocatie(locatie: Locatie) {
+    suspend fun syncSaveLocaties(locatie: Locatie) {
         locatieStore.saveLocatie(locatie).collect{ documentId ->
             if (documentId != null) {
                 println("Locatie saved with ID: $documentId")
@@ -27,6 +28,17 @@ class SyncService (private val context: Context ){
     }
 
 
+    suspend fun deleteLocatie(locatieId: String) {
+
+        locatieStore.deleteLocatie(locatieId).collect { success ->
+            if (success) {
+                println("Locatie deleted with ID: $locatieId")
+            } else {
+                println("Error deleting locatie with ID: $locatieId")
+            }
+        }
+    }
+
 
 
 
@@ -34,20 +46,15 @@ class SyncService (private val context: Context ){
         CoroutineScope(Dispatchers.IO).launch {
             locatieStore.getAllLocaties().collect { locaties ->
                 locaties.forEach { locatie ->
-                    locatieStore.saveLocatieToRoom(locatie)
+                    val existingLocatie = locatieDao.getLocatieById(locatie.id)
+                    if (existingLocatie == null) {
+                        locatieDao.insert(locatie)
+                    }
                 }
             }
         }
+
     }
 
-
-    fun syncLocatiesFromRoomToFirebase() {
-        CoroutineScope(Dispatchers.IO).launch {
-            val locaties = locatieStore.getAllLocatiesFromRoom()
-            locaties.forEach { locatie ->
-                locatieStore.saveLocatie(locatie)
-            }
-        }
-    }
 
 }

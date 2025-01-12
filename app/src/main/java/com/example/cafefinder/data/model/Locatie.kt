@@ -6,5 +6,6 @@ import androidx.room.PrimaryKey
 @Entity(tableName = "locaties")
 data class Locatie(
     @PrimaryKey val id: String = "",
-    val address: String
+    val name: String = "",
+    val address: String = ""
 )

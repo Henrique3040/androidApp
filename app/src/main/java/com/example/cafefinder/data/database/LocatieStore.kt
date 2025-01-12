@@ -14,7 +14,7 @@ import kotlinx.coroutines.withContext
 class LocatieStore (private val context: Context) {
 
     private val tag = "LocatieStore"
-    private val collection = "locaties"
+    private val collection = "locaties2"
 
     private val db = FirebaseFirestore.getInstance()
     private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
@@ -27,13 +27,6 @@ class LocatieStore (private val context: Context) {
     }
 
 
-    suspend fun saveLocatieToRoom(locatie: Locatie) {
-        withContext(Dispatchers.IO) {
-            locatieDao.insert(locatie)
-        }
-    }
-
-
     fun saveLocatie(locatie: Locatie): Flow<String?> {
 
         return callbackFlow {
@@ -42,10 +35,8 @@ class LocatieStore (private val context: Context) {
                 .addOnSuccessListener { document ->
                     println(tag + "Locatie toegevoegd met id: ${document.id}")
 
-
                     CoroutineScope(Dispatchers.IO).launch {
                     updateLocatie(locatie.copy(id = document.id)).collect{}
-
                     }
 
                     trySend(document.id)
@@ -80,6 +71,9 @@ class LocatieStore (private val context: Context) {
                     trySend(false)
                 }
 
+            println("Saving locatie with ID room: ${locatie.id}")
+            locatieDao.insert(locatie)
+
             awaitClose{}
         }
     }
@@ -105,29 +99,33 @@ class LocatieStore (private val context: Context) {
         }
     }
 
-    fun getLocatie(address : String ): Flow<Locatie?> {
+    fun deleteLocatie(locatieId: String): Flow<Boolean> {
+
+
+
         return callbackFlow {
+            if (locatieId.isEmpty()) {
+                println("$tag Fout: Locatie-ID ontbreekt.")
+                trySend(false)
+                close()
+                return@callbackFlow
+            }
+
             db.collection(collection)
-                .get()
-                .addOnSuccessListener { result ->
-
-                    var locatie: Locatie? = null
-                    for (document in result) {
-                        if (document.data["address"] == address) {
-                            locatie = document.data.toLocatie()
-                            println(tag + "Locatie gevonden met id: ${locatie.id}")
-                            trySend(locatie)
-                        }
-                        }
-
-
+                .document(locatieId)
+                .delete()
+                .addOnSuccessListener {
+                    println("$tag Locatie verwijderd met id: $locatieId")
+                    trySend(true)
                 }
-                .addOnFailureListener{ e ->
-                    println(tag + "Fout bij het getting van locatie: ${e.message}")
-                    trySend(null)
+                .addOnFailureListener { e ->
+                    println("$tag Fout bij het verwijderen van locatie: ${e.message}")
+                    trySend(false)
                 }
 
-            awaitClose{}
+            locatieDao.deleteLocatieById(locatieId)
+
+            awaitClose {}
         }
     }
 
@@ -136,6 +134,7 @@ class LocatieStore (private val context: Context) {
 
         return hashMapOf(
             "id" to id,
+            "name" to name,
             "address" to address
         )
     }
@@ -143,6 +142,7 @@ class LocatieStore (private val context: Context) {
     private fun Map<String, Any>.toLocatie(): Locatie {
         return Locatie(
             id = get("id") as String,
+            name = get("name") as String,
             address = get("address") as String
         )
 
