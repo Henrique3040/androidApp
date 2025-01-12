@@ -37,13 +37,18 @@ fun MediumToExpandedSavedLocationsScreen(modifier: Modifier, syncService: SyncSe
     val isLoading = remember { mutableStateOf(true) }
     val locaties = remember { mutableStateListOf<Locatie>() }
 
-
+    fun loadLocaties() {
+        isLoading.value = true
+        CoroutineScope(Dispatchers.IO).launch {
+            val roomLocaties = syncService.getAllLocatiesFromRoom()
+            locaties.clear()
+            locaties.addAll(roomLocaties)
+            isLoading.value = false
+        }
+    }
 
     LaunchedEffect(Unit) {
-        val roomLocaties = syncService.getAllLocatiesFromRoom()
-        locaties.clear()
-        locaties.addAll(roomLocaties)
-        isLoading.value = false
+        loadLocaties()
     }
 
     // UI-weergave
@@ -75,6 +80,7 @@ fun MediumToExpandedSavedLocationsScreen(modifier: Modifier, syncService: SyncSe
                                 // Perform delete action
                                 CoroutineScope(Dispatchers.IO).launch {
                                     syncService.deleteLocatie(locatie.id)
+                                    loadLocaties()
                                 }
                             }) {
                                 Icon(
