@@ -32,6 +32,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+/**
+ * layout for medium and expanded screen size.
+ * landscape and tablet.
+ * */
 @Composable
 fun MediumToExpandedSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
     val isLoading = remember { mutableStateOf(true) }

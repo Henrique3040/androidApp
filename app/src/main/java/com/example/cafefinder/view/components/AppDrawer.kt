@@ -7,7 +7,9 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.example.cafefinder.R
 
 @Composable
 fun AppDrawer(
@@ -21,7 +23,7 @@ fun AppDrawer(
             .background(Color.Black)
     ) {
         Text(
-            text = "Main Page",
+            text = stringResource(R.string.mainpage),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onNavigateToMain() }
@@ -29,7 +31,7 @@ fun AppDrawer(
                  color = Color.White
         )
         Text(
-            text = "Saved Locations",
+            text = stringResource(R.string.savedLocations),
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onNavigateToSavedLocations() }

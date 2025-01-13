@@ -7,6 +7,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import com.example.cafefinder.view.components.WindowType
 import com.example.cafefinder.view.components.NavigationBar
 import com.example.cafefinder.ui.theme.CafeFinderTheme
@@ -15,6 +16,8 @@ import com.example.cafefinder.view.components.rememberWindowSize
 import com.example.cafefinder.view.main.MainActivity
 import com.example.cafefinder.view.saved.screenTypes.CompactSavedLocationsScreen
 import com.example.cafefinder.view.saved.screenTypes.MediumToExpandedSavedLocationsScreen
+import com.example.cafefinder.R
+
 
 class SavedLocatieActivity : ComponentActivity() {
 
@@ -29,7 +32,7 @@ class SavedLocatieActivity : ComponentActivity() {
         setContent {
             CafeFinderTheme {
                 NavigationBar(
-                    title = "Saved Favorite Locations",
+                    title = stringResource(R.string.saved_locations),
                     onNavigateToMain = {
                         val intent = Intent(this, MainActivity::class.java)
                         startActivity(intent)
