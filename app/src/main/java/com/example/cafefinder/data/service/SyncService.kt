@@ -13,6 +13,9 @@ class SyncService (private val context: Context ){
     private val locatieStore = LocatieStore(context)
     private val locatieDao = AppDatabase.getDatabase(context).locatieDao()
 
+    /**
+    * functie om locaties te saven in de room database en firebase
+    * */
     suspend fun syncSaveLocaties(locatie: Locatie) {
         locatieStore.saveLocatie(locatie).collect{ documentId ->
             if (documentId != null) {
@@ -23,11 +26,18 @@ class SyncService (private val context: Context ){
         }
     }
 
+    /**
+    * functie om alle locaties uit de room database te halen
+    * */
     suspend fun getAllLocatiesFromRoom(): List<Locatie> {
         return locatieStore.getAllLocatiesFromRoom()
     }
 
-
+    /**
+    * functie om alle locaties uit de room database en firebase te verwijderen
+    *
+    *
+    * */
     suspend fun deleteLocatie(locatieId: String) {
 
         locatieStore.deleteLocatie(locatieId).collect { success ->
@@ -41,7 +51,11 @@ class SyncService (private val context: Context ){
 
 
 
-
+    /**
+    *
+    * functie om alle locaties uit firebase database en room database te synchroniseren
+    *
+    * */
     fun syncLocatiesFromFirebaseToRoom() {
         CoroutineScope(Dispatchers.IO).launch {
             locatieStore.getAllLocaties().collect { locaties ->

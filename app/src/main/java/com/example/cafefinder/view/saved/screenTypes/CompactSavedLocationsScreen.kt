@@ -27,6 +27,11 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 
+/**
+ *
+ * Layout for compact screen size.
+ *
+ * */
 @Composable
 fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
 
@@ -42,6 +47,7 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
             locaties.clear()
             locaties.addAll(roomLocaties)
             isLoading.value = false
+
         }
     }
 
