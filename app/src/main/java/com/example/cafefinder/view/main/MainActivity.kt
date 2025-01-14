@@ -85,6 +85,7 @@ class MainActivity : ComponentActivity() {
                     MainScreen(modifier,
                     selectedLocation = pendingLocation.value,
                         onSelectLocationClick = {
+                            // Open the Autocomplete UI for place selection
                             val fields = listOf(Place.Field.NAME,Place.Field.ADDRESS)
                             val intent = Autocomplete.IntentBuilder(AutocompleteActivityMode.FULLSCREEN, fields).build(this)
                             placesResult.launch(intent)
