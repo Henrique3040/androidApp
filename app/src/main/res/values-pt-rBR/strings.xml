@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Localizador de Cafés</string>
+    <string name="saved_locations">Locais Salvos</string>
+    <string name="mainpage">Página Principal</string>
+    <string name="savedLocations">Locais Salvos</string>
+    <string name="selected_Location">Local Selecionado</string>
+    <string name="selectLocation">Selecionar Local</string>
+    <string name="save">Salvar</string>
+</resources>
