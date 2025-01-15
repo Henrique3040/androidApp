@@ -39,7 +39,7 @@ abstract class AppDatabase : RoomDatabase() {
                 val instance = Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "locaties_database" // The name of the SQLite database file
+                    "locaties" // The name of the SQLite database file
                 ).build()
                 INSTANCE = instance // Cache the created instance for future use
                 instance // Return the created instance

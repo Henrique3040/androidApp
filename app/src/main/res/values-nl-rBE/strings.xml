@@ -7,4 +7,5 @@
     <string name="selected_Location">Geselecteerde Locatie</string>
     <string name="selectLocation">Zoek een Locatie</string>
     <string name="save">Opslaan</string>
+    <string name="selected_language">Geselecteerde taal: </string>
 </resources>
