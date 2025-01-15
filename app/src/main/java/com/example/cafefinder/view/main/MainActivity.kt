@@ -22,17 +22,21 @@ import com.example.cafefinder.data.service.SyncService
 import com.example.cafefinder.ui.theme.CafeFinderTheme
 import com.example.cafefinder.view.saved.SavedLocatieActivity
 import com.example.cafefinder.view.components.NavigationBar
+import com.example.cafefinder.view.main.screen.MainScreen
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.widget.Autocomplete
 import com.google.android.libraries.places.widget.model.AutocompleteActivityMode
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class MainActivity : ComponentActivity() {
 
     // State for holding the currently selected and pending locations
     private val selectedLocation = mutableStateOf("")
     private var pendingLocation = mutableStateOf("")
+    private var currentLanguage = mutableStateOf(Locale.getDefault().displayName)
+
 
     private lateinit var syncService: SyncService
 
@@ -84,6 +88,11 @@ class MainActivity : ComponentActivity() {
                 ) { modifier ->
                     MainScreen(modifier,
                     selectedLocation = pendingLocation.value,
+                        currentLanguage = currentLanguage.value,
+                        onLanguageChange = { language ->
+                            currentLanguage.value = language
+                            updateLocale(language)
+                        },
                         onSelectLocationClick = {
                             // Open the Autocomplete UI for place selection
                             val fields = listOf(Place.Field.NAME,Place.Field.ADDRESS)
@@ -92,6 +101,7 @@ class MainActivity : ComponentActivity() {
                         },
                         onsaveLocationClick = {
                             saveLocation(pendingLocation.value)
+                            recreate()
                         }
                         )
                 }
@@ -115,55 +125,28 @@ class MainActivity : ComponentActivity() {
         }
     }
 
-}
-
-
-
-@Composable
-fun MainScreen(modifier: Modifier,
-               selectedLocation: String,
-               onSelectLocationClick: () -> Unit,
-               onsaveLocationClick: () -> Unit) {
-
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
-    ) {
-        Text(text = stringResource(R.string.selected_Location) +"\n$selectedLocation")
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onSelectLocationClick) {
-            Text(stringResource(R.string.selectLocation))
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = onsaveLocationClick) {
-            Text(stringResource(R.string.save))
+    /**
+     * Updates the app's locale based on the selected language.
+     */
+    private fun updateLocale(language: String) {
+        val locale = when (language) {
+            "Nederlands" -> Locale("nl")
+            "Português" -> Locale("pt")
+            else -> Locale("en")
         }
 
-
+        val config = resources.configuration
+        config.setLocale(locale)
+        resources.updateConfiguration(config, resources.displayMetrics)
+        Locale.setDefault(locale)
+        recreate() // Restart activity to apply changes
     }
+
+
 }
 
-@Preview(showBackground = true)
-@Composable
-fun MainScreenPreview() {
 
-    CafeFinderTheme {
-        NavigationBar(
-            title = "Finder",
-            onNavigateToMain = { /* Already here */ },
-            onNavigateToSavedLocations = {}
-        ){
-            MainScreen(modifier = Modifier.fillMaxSize(),
-                selectedLocation = "Selected Location",
-                onSelectLocationClick = {},
-                onsaveLocationClick = {}
-            )
-        }
 
-    }
-}
+
 
 
