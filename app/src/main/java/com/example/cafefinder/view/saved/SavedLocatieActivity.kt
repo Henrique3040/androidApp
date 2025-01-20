@@ -48,6 +48,9 @@ class SavedLocatieActivity : ComponentActivity() {
             }
         }
     }
+
+
+
 }
 
 @Composable
@@ -64,6 +67,9 @@ fun SavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
 
     }
 
+
+
 }
+
 
 

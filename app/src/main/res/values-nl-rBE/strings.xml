@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Cafe zoeker</string>
-    <string name="saved_locations">Opgeslagd Locaties</string>
+    <string name="app_name">Café Zoeker</string>
+    <string name="saved_locations">Opgeslagen Locaties</string>
     <string name="mainpage">Hoofdpagina</string>
-    <string name="savedLocations">Opgeslaagd Locaties</string>
-    <string name="selected_Location">geselecteerd locatie</string>
+    <string name="savedLocations">Opgeslagen Locaties</string>
+    <string name="selected_Location">Geselecteerde Locatie</string>
     <string name="selectLocation">Zoek een Locatie</string>
     <string name="save">Opslaan</string>
+    <string name="selected_language">Geselecteerde taal: </string>
 </resources>

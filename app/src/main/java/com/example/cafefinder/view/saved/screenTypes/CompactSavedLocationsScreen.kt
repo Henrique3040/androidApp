@@ -38,8 +38,6 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
     val isLoading = remember { mutableStateOf(true) }
     val locaties = remember { mutableStateListOf<Locatie>() }
 
-
-
     fun loadLocaties() {
         isLoading.value = true
         CoroutineScope(Dispatchers.IO).launch {
@@ -47,8 +45,8 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
             locaties.clear()
             locaties.addAll(roomLocaties)
             isLoading.value = false
-
         }
+
     }
 
     LaunchedEffect(Unit) {
@@ -82,6 +80,7 @@ fun CompactSavedLocationsScreen(modifier: Modifier, syncService: SyncService) {
                                 loadLocaties()
 
                             }
+
 
                         }) {
                             Icon(

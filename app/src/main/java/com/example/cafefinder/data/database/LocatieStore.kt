@@ -45,15 +45,17 @@ class LocatieStore (private val context: Context) {
 
         return callbackFlow {
             db.collection(collection)
-                .add(locatie.toHashMap()) // Add locatie as a hashmap to Firestore
-                .addOnSuccessListener { document ->
-                    println(tag + "Locatie toegevoegd met id: ${document.id}")
+                .document(locatie.id)
+                .set(locatie.toHashMap())
+                .addOnSuccessListener {
+                    println(tag + "Locatie toegevoegd met id: ${locatie.id}")
 
                     CoroutineScope(Dispatchers.IO).launch {
-                    updateLocatie(locatie.copy(id = document.id)).collect{}
+                        locatieDao.insert(locatie) // Save to Room with the same ID
                     }
 
-                    trySend(document.id)
+                    trySend(locatie.id)
+
                 }
                 .addOnFailureListener{ e ->
                     println(tag + "Fout bij het toevoegen van locatie: ${e.message}")
@@ -64,38 +66,6 @@ class LocatieStore (private val context: Context) {
         }
     }
 
-    /**
-     * Updates an existing locatie in Firestore and Room database.
-     * @param locatie The [Locatie] object with updated details.
-     * @return A Flow emitting `true` if successful, `false` otherwise.
-     */
-    fun updateLocatie(locatie: Locatie): Flow<Boolean> {
-        return callbackFlow {
-            if (locatie.id.isEmpty()) {
-                println(tag + "Fout: Locatie-ID ontbreekt.")
-                trySend(false)
-                close() // Stop further processing
-                return@callbackFlow
-            }
-
-            db.collection(collection)
-                .document(locatie.id)
-                .set(locatie.toHashMap()) // Update locatie in Firestore
-                .addOnSuccessListener {
-                    println(tag + "Locatie upgedate met id: ${locatie.id}")
-                    trySend(true) // Emit success
-                }
-                .addOnFailureListener{ e ->
-                    println(tag + "Fout bij het toevoegen van locatie: ${e.message}")
-                    trySend(false) // Emit failure
-                }
-
-            println("Saving locatie with ID room: ${locatie.id}")
-            locatieDao.insert(locatie) // Update local Room database
-
-            awaitClose{}
-        }
-    }
 
     /**
      * Retrieves all locatie entries from Firestore in real-time.
@@ -122,9 +92,13 @@ class LocatieStore (private val context: Context) {
         }
     }
 
+
+    /**
+     * Deletes a locatie from Firestore and Room database.
+     * @param locatieId The ID of the locatie to delete.
+     * @return A Flow emitting a boolean indicating success or failure.
+     */
     fun deleteLocatie(locatieId: String): Flow<Boolean> {
-
-
 
         return callbackFlow {
             if (locatieId.isEmpty()) {
@@ -138,16 +112,19 @@ class LocatieStore (private val context: Context) {
                 .document(locatieId)
                 .delete() // Delete locatie from Firestore
                 .addOnSuccessListener {
-                    println("$tag Locatie verwijderd met id: $locatieId")
-                    trySend(true) // Emit success
+                    println("$tag Locatie deleted from Firestore with ID: $locatieId")
+
+                    // Delete from Room
+                    CoroutineScope(Dispatchers.IO).launch {
+                        locatieDao.deleteLocatieById(locatieId)
+                        println("$tag Locatie deleted from Room with ID: $locatieId")
+                        trySend(true) // Emit success after both deletions
+                    }
                 }
                 .addOnFailureListener { e ->
                     println("$tag Fout bij het verwijderen van locatie: ${e.message}")
                     trySend(false)  // Emit failure
                 }
-
-            locatieDao.deleteLocatieById(locatieId) // Delete locatie from Room database
-
 
             awaitClose {}
         }
